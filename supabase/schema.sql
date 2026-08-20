@@ -13,6 +13,7 @@ create table if not exists public.questions (
   correct_index int not null default 0,
   rationale text not null default '',
   source text not null default '',
+  target_posts jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -22,6 +23,7 @@ create table if not exists public.attempts (
   employee_name text not null,
   team text not null,
   role text not null,
+  post_profile_id text not null default 'operateur',
   mode text not null,
   score int not null default 0,
   question_count int not null default 0,

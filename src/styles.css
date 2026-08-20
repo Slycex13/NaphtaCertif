@@ -168,3 +168,15 @@ body { background: var(--paper); color: #3a3a3a; }
   .topbar { height: 64px; }
   .content-area { min-height: calc(100vh - 64px); }
 }
+
+/* Postes : une sélection visuelle inspirée des pupitres et des fiches de quart. */
+.post-profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0 22px; }
+.post-profile-option { position: relative; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; min-height: 92px; padding: 11px; color: #687482; border: 1px solid #dfe3e7; border-radius: 2px; background: #fff; text-align: left; transition: border-color .18s, background .18s, transform .18s; }
+.post-profile-option:hover { border-color: #8bb9d5; background: #f7fbfd; transform: translateY(-1px); }
+.post-profile-option.selected { border-color: var(--blue); background: #edf7fc; box-shadow: inset 3px 0 0 var(--blue); }
+.post-profile-icon { display: grid; place-items: center; width: 30px; height: 30px; color: var(--blue); border-radius: 2px; background: #e5f2fa; }
+.post-profile-icon.orange { color: #ba7338; background: #f8eadb; }.post-profile-icon.mint { color: #3b9274; background: #e5f3ec; }.post-profile-icon.yellow { color: #a68229; background: #f8f0d9; }.post-profile-icon.violet { color: #667ba6; background: #e9edf6; }
+.post-profile-copy { display: grid; align-content: start; gap: 3px; padding-right: 12px; }.post-profile-copy strong { color: var(--ink); font-size: 11px; line-height: 1.2; }.post-profile-copy small { color: var(--blue); font: 500 8px var(--mono); letter-spacing: .05em; text-transform: uppercase; }.post-profile-copy em { color: #8d969f; font-size: 9px; font-style: normal; line-height: 1.35; }.post-profile-check { position: absolute; top: 11px; right: 9px; color: var(--blue); }
+.selected-profile-note { display: flex; align-items: center; gap: 9px; margin: -5px 0 20px; padding: 9px 10px; border-left: 2px solid var(--blue); background: #f4f8fa; }.selected-profile-note .theme-dot { flex: none; }.selected-profile-note span:last-child { display: grid; gap: 2px; }.selected-profile-note strong { color: var(--ink); font-size: 10px; }.selected-profile-note small { color: #8b959f; font-size: 9px; }
+.post-target-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }.post-target-option { display: flex; align-items: center; gap: 7px; padding: 8px; color: #667482; border: 1px solid #e1e5e8; border-radius: 2px; background: #fff; font-size: 9px; }.post-target-option input { accent-color: var(--blue); }.post-target-option:has(input:checked) { color: var(--ink); border-color: #a8cfe4; background: #edf7fc; }
+@media (max-width: 560px) { .post-profile-grid { grid-template-columns: 1fr; }.post-profile-option { min-height: 78px; } }

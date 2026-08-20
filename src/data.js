@@ -7,6 +7,53 @@ export const themes = [
   { id: 'securite', name: 'Sécurités, BMS & ESD', short: 'Sécurités', code: 'EXP-U-15-TRAME', tone: 'red', icon: 'shield' },
 ]
 
+export const postProfiles = [
+  {
+    id: 'operateur',
+    label: 'Opérateur',
+    short: 'Rondes & manœuvres',
+    description: 'Gestes terrain, mises en sécurité et transmission des écarts.',
+    tone: 'orange',
+    icon: 'activity',
+  },
+  {
+    id: 'rondier',
+    label: 'Rondier',
+    short: 'Surveillance terrain',
+    description: 'Relevés, détection d’anomalies et contrôle des équipements.',
+    tone: 'mint',
+    icon: 'wind',
+  },
+  {
+    id: 'chef-thermique',
+    label: 'Chef de poste thermique',
+    short: 'Chaudières & vapeur',
+    description: 'Conduite thermique, combustibles et performance énergétique.',
+    tone: 'yellow',
+    icon: 'flame',
+  },
+  {
+    id: 'chef-elec',
+    label: 'Chef de poste électrique',
+    short: 'RDE & consignations',
+    description: 'Réseau électrique, utilités hors vapeur et manœuvres HT/BT.',
+    tone: 'blue',
+    icon: 'zap',
+  },
+  {
+    id: 'chef-quart',
+    label: 'Chef de quart',
+    short: 'Coordination & arbitrage',
+    description: 'Vision globale, décisions sûres et conduite des situations incidentelles.',
+    tone: 'violet',
+    icon: 'shield',
+  },
+]
+
+export const allPostProfileIds = postProfiles.map((profile) => profile.id)
+export const getPostProfile = (profileId) => postProfiles.find((profile) => profile.id === profileId) || postProfiles[0]
+export const questionMatchesPost = (question, profileId) => !question.targetPosts?.length || question.targetPosts.includes(profileId)
+
 // Jeu de départ issu des domaines identifiés dans les supports fournis.
 // Les formulations métier sont marquées "à valider" dans le panel admin avant publication.
 export const seedQuestions = [

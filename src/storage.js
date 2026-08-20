@@ -18,6 +18,7 @@ const toRemoteQuestion = (question) => ({
   correct_index: question.correctIndex,
   rationale: question.rationale,
   source: question.source,
+  target_posts: question.targetPosts || [],
 })
 
 const readLocal = () => {
@@ -38,23 +39,31 @@ export async function loadStore() {
   if (!supabase) return localStore
 
   try {
-    const [{ data: questions, error: questionsError }, { data: attempts, error: attemptsError }] = await Promise.all([
-      supabase.from('questions').select('*').order('created_at', { ascending: false }),
-      supabase.from('attempts').select('*').order('completed_at', { ascending: false }),
-    ])
-    if (questionsError || attemptsError) throw questionsError || attemptsError
+    const { data: questions, error: questionsError } = await supabase
+      .from('questions')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (questionsError) throw questionsError
+
+    // Les employés peuvent lire les questions publiées mais pas les résultats.
+    // Une erreur RLS sur attempts ne doit donc pas faire repasser toute l'application
+    // en mode local et masquer la banque distante.
+    const { data: attempts, error: attemptsError } = await supabase
+      .from('attempts')
+      .select('*')
+      .order('completed_at', { ascending: false })
     const remoteQuestions = (questions || []).map((question) => ({
       id: question.id, themeId: question.theme_id, status: question.status, critical: question.critical,
       prompt: question.prompt, choices: question.choices, correctIndex: question.correct_index,
-      rationale: question.rationale, source: question.source,
+      rationale: question.rationale, source: question.source, targetPosts: question.target_posts || [],
     }))
     const remoteAttempts = (attempts || []).map((attempt) => ({
       id: attempt.id, employeeName: attempt.employee_name, team: attempt.team, role: attempt.role,
       mode: attempt.mode, score: attempt.score, questionCount: attempt.question_count,
       overconfidence: attempt.overconfidence, criticalFailures: attempt.critical_failures,
-      themeIds: attempt.theme_ids || [], completedAt: attempt.completed_at, answers: attempt.answers || [],
+      themeIds: attempt.theme_ids || [], postProfileId: attempt.post_profile_id || '', completedAt: attempt.completed_at, answers: attempt.answers || [],
     }))
-    return { questions: remoteQuestions.length ? remoteQuestions : localStore.questions, attempts: remoteAttempts, isDemo: false }
+    return { questions: remoteQuestions.length ? remoteQuestions : localStore.questions, attempts: attemptsError ? [] : remoteAttempts, isDemo: false }
   } catch (error) {
     console.warn('Supabase indisponible, utilisation du mode local.', error)
     return localStore
@@ -69,7 +78,7 @@ export async function saveAttempt(attempt, currentStore) {
       id: attempt.id, employee_name: attempt.employeeName, team: attempt.team, role: attempt.role,
       mode: attempt.mode, score: attempt.score, question_count: attempt.questionCount,
       overconfidence: attempt.overconfidence, critical_failures: attempt.criticalFailures,
-      theme_ids: attempt.themeIds, completed_at: attempt.completedAt, answers: attempt.answers,
+      theme_ids: attempt.themeIds, post_profile_id: attempt.postProfileId, completed_at: attempt.completedAt, answers: attempt.answers,
     })
     if (error) console.warn('Résultat conservé localement, synchronisation distante impossible.', error)
   }
