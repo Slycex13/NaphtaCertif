@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centrale Thermique & Utilités - Rafraîchissement des Compétences</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dcs: {
+                            bg: '#0b1329',
+                            panel: '#1e293b',
+                            border: '#334155',
+                            header: '#0284c7',
+                            accent: '#38bdf8',
+                            green: '#22c55e',
+                            amber: '#f59e0b',
+                            red: '#ef4444',
+                            orange: '#f97316'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['Consolas', 'Courier New', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b1329;
+            color: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .dcs-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        }
+        .dcs-panel-header {
+            background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
+            border-bottom: 2px solid #0284c7;
+        }
+        .led-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .led-green { background-color: #22c55e; box-shadow: 0 0 8px #22c55e; }
+        .led-amber { background-color: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+        .led-red { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
+        .led-orange { background-color: #f97316; box-shadow: 0 0 8px #f97316; }
+        .led-blue { background-color: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+
+    <header class="bg-slate-900 border-b border-slate-700 px-4 py-3 flex flex-wrap justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="flex space-x-1">
+                <span class="led-indicator led-green animate-pulse"></span>
+                <span class="led-indicator led-blue"></span>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg tracking-wide text-cyan-400 uppercase font-mono">SNCC - UTILITIES & POWER PLANT</h1>
+                <p class="text-xs text-slate-400">Système d'Évaluation & Supervision des Compétences d'Exploitation</p>
+            </div>
+        </div>
+
+        <nav class="flex items-center space-x-1 overflow-x-auto my-2 md:my-0">
+            <button data-nav="home" class="nav-btn px-3 py-1.5 text-xs font-semibold rounded bg-cyan-900/60 text-cyan-300 border border-cyan-500 hover:bg-cyan-800 transition">ACCUEIL</button>
+            <button data-nav="history" class="nav-btn px-3 py-1.5 text-xs font-semibold rounded text-slate-300 hover:bg-slate-800 border border-transparent transition">HISTORIQUE</button>
+            <button data-nav="teams" class="nav-btn px-3 py-1.5 text-xs font-semibold rounded text-slate-300 hover:bg-slate-800 border border-transparent transition">SUIVI ÉQUIPES</button>
+            <button data-nav="dashboard" class="nav-btn px-3 py-1.5 text-xs font-semibold rounded text-slate-300 hover:bg-slate-800 border border-transparent transition">TABLEAU FORMATEUR</button>
+            <button data-nav="doc" class="nav-btn px-3 py-1.5 text-xs font-semibold rounded text-slate-300 hover:bg-slate-800 border border-transparent transition">RÉFÉRENTIEL</button>
+        </nav>
+
+        <div id="active-user-badge" class="hidden text-xs bg-slate-800 border border-slate-600 px-3 py-1 rounded text-slate-300 flex items-center space-x-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span id="badge-user-info" class="font-mono">Agent: -</span>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 md:p-6 max-w-7xl w-full mx-auto">
+
+        <!-- VIEW 1: HOME PAGE / SESSION LAUNCH FORM -->
+        <section id="view-home" class="space-y-6">
+            <div class="dcs-card rounded-lg p-6 border-l-4 border-l-cyan-500">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-700">
+                    <div>
+                        <span class="text-xs font-mono bg-cyan-950 text-cyan-400 border border-cyan-800 px-2 py-0.5 rounded">RAFRAÎCHISSEMENT TECHNIQUE EN CONTINU</span>
+                        <h2 class="text-2xl font-bold text-slate-100 mt-1">CENTRALE THERMIQUE – UTILITÉS</h2>
+                        <p class="text-sm text-slate-400">Évaluation interactive, traçabilité et détection de la surconfiance opérationnelle.</p>
+                    </div>
+                    <div class="text-right hidden sm:block">
+                        <div class="text-xs font-mono text-slate-400">RÉFÉRENTIELS APPLICABLES</div>
+                        <div class="text-xs font-mono text-cyan-400">EXP-U-15-002 à 007</div>
+                    </div>
+                </div>
+
+                <!-- Alert / Message Banner -->
+                <div id="app-message-box" class="hidden my-4 p-4 rounded-lg bg-amber-950/80 border border-amber-500/50 text-amber-200 text-sm flex items-start justify-between">
+                    <div class="flex items-start space-x-3">
+                        <span class="text-xl">⚠️</span>
+                        <div id="app-message-text" class="font-medium leading-relaxed"></div>
+                    </div>
+                    <button type="button" id="btn-close-message" class="text-amber-400 hover:text-amber-100 font-bold ml-4">✕</button>
+                </div>
+
+                <form id="setup-form" class="mt-6 space-y-6">
+                    <!-- Agent identification -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-900/60 p-4 rounded-lg border border-slate-800">
+                        <div>
+                            <label for="input-team" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Équipe postée *</label>
+                            <select id="input-team" required class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500">
+                                <option value="">-- Sélectionner l'équipe --</option>
+                                <option value="Équipe 1">Équipe 1</option>
+                                <option value="Équipe 2">Équipe 2</option>
+                                <option value="Équipe 3">Équipe 3</option>
+                                <option value="Équipe 4">Équipe 4</option>
+                                <option value="Équipe 5">Équipe 5</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="input-nom" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Nom *</label>
+                            <input type="text" id="input-nom" required placeholder="Ex: DUPONT" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500">
+                        </div>
+                        <div>
+                            <label for="input-prenom" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Prénom *</label>
+                            <input type="text" id="input-prenom" required placeholder="Ex: Jean" class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500">
+                        </div>
+                        <div>
+                            <label for="input-role" class="block text-xs font-semibold text-slate-300 uppercase mb-1">Fonction *</label>
+                            <select id="input-role" required class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500">
+                                <option value="">-- Sélectionner la fonction --</option>
+                                <option value="Opérateur extérieur">Opérateur extérieur</option>
+                                <option value="Consoliste / Chef de Poste">Consoliste / Chef de Poste</option>
+                                <option value="Électricien HT / Dispatching">Électricien HT / Dispatching</option>
+                                <option value="Chef de Quart">Chef de Quart</option>
+                                <option value="Formateur">Formateur</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Session Mode -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-2">Mode de travail</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <label class="flex items-start p-3 bg-slate-900/80 rounded border border-slate-700 cursor-pointer hover:border-cyan-500 transition">
+                                <input type="radio" name="session-mode" value="evaluation" checked class="mt-1 text-cyan-500 focus:ring-0">
+                                <div class="ml-3">
+                                    <div class="text-sm font-bold text-slate-200">ÉVALUATION</div>
+                                    <div class="text-xs text-slate-400">Score global, correction synthétique affichée à la fin uniquement.</div>
+                                </div>
+                            </label>
+                            <label class="flex items-start p-3 bg-slate-900/80 rounded border border-slate-700 cursor-pointer hover:border-cyan-500 transition">
+                                <input type="radio" name="session-mode" value="training" class="mt-1 text-cyan-500 focus:ring-0">
+                                <div class="ml-3">
+                                    <div class="text-sm font-bold text-slate-200">ENTRAÎNEMENT</div>
+                                    <div class="text-xs text-slate-400">Correction instantanée, justification immédiate avec rappel de la consigne.</div>
+                                </div>
+                            </label>
+                            <label class="flex items-start p-3 bg-slate-900/80 rounded border border-slate-700 cursor-pointer hover:border-cyan-500 transition">
+                                <input type="radio" name="session-mode" value="targeted" class="mt-1 text-cyan-500 focus:ring-0">
+                                <div class="ml-3">
+                                    <div class="text-sm font-bold text-slate-200">RÉVISION CIBLÉE</div>
+                                    <div class="text-xs text-slate-400">Priorisation absolue sur les questions critiques et situations dégradées.</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Themes selection -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-xs font-semibold text-slate-300 uppercase">Thèmes techniques à évaluer</label>
+                            <span class="text-xs text-cyan-400">Cochez les domaines souhaités</span>
+                        </div>
+                        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 text-sm" id="themes-checkbox-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Question count selector -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-2">Nombre de questions souhaité</label>
+                        <div class="flex flex-wrap gap-4">
+                            <label class="flex items-center space-x-2 bg-slate-900 px-4 py-2 rounded border border-slate-700 cursor-pointer hover:border-cyan-500">
+                                <input type="radio" name="question-count" value="10" class="text-cyan-500">
+                                <span class="text-sm font-bold">10 questions</span>
+                            </label>
+                            <label class="flex items-center space-x-2 bg-slate-900 px-4 py-2 rounded border border-slate-700 cursor-pointer hover:border-cyan-500">
+                                <input type="radio" name="question-count" value="20" checked class="text-cyan-500">
+                                <span class="text-sm font-bold">20 questions</span>
+                            </label>
+                            <label class="flex items-center space-x-2 bg-slate-900 px-4 py-2 rounded border border-slate-700 cursor-pointer hover:border-cyan-500">
+                                <input type="radio" name="question-count" value="30" class="text-cyan-500">
+                                <span class="text-sm font-bold">30 questions</span>
+                            </label>
+                            <label class="flex items-center space-x-2 bg-slate-900 px-4 py-2 rounded border border-slate-700 cursor-pointer hover:border-cyan-500">
+                                <input type="radio" name="question-count" value="50" class="text-cyan-500">
+                                <span class="text-sm font-bold">50 questions (Banque Complète)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Launch button -->
+                    <div class="pt-4 flex justify-end">
+                        <button type="submit" id="btn-start-session" class="w-full md:w-auto px-8 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded shadow-lg shadow-cyan-900/50 transition flex items-center justify-center space-x-2">
+                            <span>DÉMARRER LA SESSION</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- VIEW 2: QUIZ / QUESTIONNAIRE -->
+        <section id="view-quiz" class="hidden space-y-6">
+            <div class="dcs-card rounded-lg p-6">
+                <!-- Header quiz -->
+                <div class="flex flex-wrap justify-between items-center pb-4 border-b border-slate-700 mb-6 gap-2">
+                    <div class="flex items-center space-x-3">
+                        <span id="quiz-progress-text" class="text-lg font-mono font-bold text-cyan-400 bg-slate-900 px-3 py-1 rounded border border-slate-700">
+                            QUESTION 1 / 20
+                        </span>
+                        <span id="quiz-theme-badge" class="text-xs bg-slate-800 text-slate-300 border border-slate-600 px-2.5 py-1 rounded">
+                            Réseau gaz
+                        </span>
+                        <span id="quiz-critical-badge" class="hidden text-xs bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded font-bold uppercase">
+                            ⚠️ CRITIQUE
+                        </span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-slate-400">Source:</span>
+                        <span id="quiz-doc-ref" class="text-xs font-mono text-cyan-300 bg-cyan-950/60 border border-cyan-800 px-2 py-1 rounded">
+                            EXP-U-15-006
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Question Text -->
+                <div class="mb-6">
+                    <h3 id="quiz-question-text" class="text-xl font-semibold text-slate-100 leading-relaxed">
+                        Chargement de la question...
+                    </h3>
+                </div>
+
+                <!-- Answer options -->
+                <div id="quiz-options-container" class="space-y-3 mb-8">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Certitude section -->
+                <div class="bg-slate-900/80 p-4 rounded-lg border border-slate-800 mb-6">
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-3">
+                        Indiquez obligatoirement votre niveau de certitude avant de valider :
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <button type="button" data-confidence="sur" class="btn-confidence p-3 rounded border border-slate-700 bg-slate-800 text-left hover:border-emerald-500 transition flex items-center space-x-3">
+                            <span class="text-xl">🟢</span>
+                            <div>
+                                <div class="text-xs font-bold text-emerald-400">SÛR</div>
+                                <div class="text-[11px] text-slate-400">"Je pense connaître la réponse."</div>
+                            </div>
+                        </button>
+
+                        <button type="button" data-confidence="hesitant" class="btn-confidence p-3 rounded border border-slate-700 bg-slate-800 text-left hover:border-amber-500 transition flex items-center space-x-3">
+                            <span class="text-xl">🟡</span>
+                            <div>
+                                <div class="text-xs font-bold text-amber-400">HÉSITANT</div>
+                                <div class="text-[11px] text-slate-400">"J'hésite entre plusieurs réponses."</div>
+                            </div>
+                        </button>
+
+                        <button type="button" data-confidence="hasard" class="btn-confidence p-3 rounded border border-slate-700 bg-slate-800 text-left hover:border-red-500 transition flex items-center space-x-3">
+                            <span class="text-xl">🔴</span>
+                            <div>
+                                <div class="text-xs font-bold text-red-400">AU HASARD</div>
+                                <div class="text-[11px] text-slate-400">"Je ne connais pas réellement la réponse."</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Training feedback box (Training mode only) -->
+                <div id="quiz-feedback-box" class="hidden mb-6 p-4 rounded-lg border">
+                    <div id="feedback-status" class="font-bold text-lg mb-2"></div>
+                    <div id="feedback-correct-answer" class="text-sm font-semibold mb-2"></div>
+                    <div id="feedback-explanation" class="text-xs text-slate-300 mb-2"></div>
+                    <div id="feedback-reference" class="text-xs font-mono text-cyan-400 mb-2"></div>
+                    <div id="feedback-reminder" class="text-xs bg-slate-950 p-3 rounded border border-slate-800 italic text-slate-300"></div>
+                </div>
+
+                <!-- Validation and action footer -->
+                <div class="flex justify-between items-center pt-4 border-t border-slate-800">
+                    <span id="quiz-mode-indicator" class="text-xs text-slate-500 uppercase font-mono">MODE EVALUATION</span>
+                    
+                    <div class="flex space-x-3">
+                        <button type="button" id="btn-validate-answer" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded shadow transition">
+                            VALIDER MA RÉPONSE
+                        </button>
+                        <button type="button" id="btn-next-question" class="hidden px-6 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm rounded shadow transition">
+                            QUESTION SUIVANTE ➔
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: REPORT VIEW -->
+        <section id="view-report" class="hidden space-y-6">
+            <!-- Header summary card -->
+            <div class="dcs-card rounded-lg p-6 border-l-4 border-l-cyan-500">
+                <div class="flex flex-wrap justify-between items-start gap-4 pb-4 border-b border-slate-700">
+                    <div>
+                        <span class="text-xs font-mono bg-cyan-950 text-cyan-400 border border-cyan-800 px-2 py-0.5 rounded">RÉSULTAT OFFICIEL</span>
+                        <h2 class="text-2xl font-bold text-slate-100 mt-1">COMPTE RENDU D'ÉVALUATION</h2>
+                        <div id="report-agent-meta" class="text-sm text-slate-400 mt-1">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl font-mono font-bold text-cyan-400" id="report-score-percent">0%</div>
+                        <div class="text-xs text-slate-400" id="report-score-ratio">0 / 0 Bonnes réponses</div>
+                    </div>
+                </div>
+
+                <!-- 4 KPI Badges -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                    <div class="bg-emerald-950/40 border border-emerald-800 p-4 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-emerald-400">✓ SOLIDES</span>
+                            <span class="text-xl font-mono font-bold text-emerald-300" id="kpi-solide">0</span>
+                        </div>
+                        <p class="text-[10px] text-emerald-500/80 mt-1">Bonne réponse + Sûr</p>
+                    </div>
+
+                    <div class="bg-amber-950/40 border border-amber-800 p-4 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-amber-400">? À CONSOLIDER</span>
+                            <span class="text-xl font-mono font-bold text-amber-300" id="kpi-consolider">0</span>
+                        </div>
+                        <p class="text-[10px] text-amber-500/80 mt-1">Bonne réponse + Hésitant/Hasard</p>
+                    </div>
+
+                    <div class="bg-red-950/40 border border-red-800 p-4 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-red-400">✗ ERREURS</span>
+                            <span class="text-xl font-mono font-bold text-red-300" id="kpi-erreur">0</span>
+                        </div>
+                        <p class="text-[10px] text-red-500/80 mt-1">Mauvaise réponse + Hésitant/Hasard</p>
+                    </div>
+
+                    <div class="bg-orange-950/40 border border-orange-800 p-4 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-orange-400">⚠️ SURCONFIANCE</span>
+                            <span class="text-xl font-mono font-bold text-orange-300" id="kpi-surconfiance">0</span>
+                        </div>
+                        <p class="text-[10px] text-orange-500/80 mt-1">Mauvaise réponse + Sûr !</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Priority Refresher list -->
+            <div class="dcs-card rounded-lg p-6">
+                <h3 class="text-lg font-bold text-slate-100 mb-4 flex items-center space-x-2">
+                    <span class="text-orange-400">🔥</span>
+                    <span>PRIORITÉS DE RAFRAÎCHISSEMENT DE L'AGENT</span>
+                </h3>
+                <div id="report-priorities-list" class="space-y-2 text-sm">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Themes competence summary table -->
+            <div class="dcs-card rounded-lg p-6">
+                <h3 class="text-lg font-bold text-slate-100 mb-4">TABLEAU DES COMPÉTENCES PAR THÈME</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-400 border-b border-slate-700 font-mono text-xs">
+                                <th class="p-3">THÈME</th>
+                                <th class="p-3">SCORE</th>
+                                <th class="p-3">QUESTIONS</th>
+                                <th class="p-3">ERREURS</th>
+                                <th class="p-3">SURCONFIANCES</th>
+                                <th class="p-3">DIAGNOSTIC GLOBAL</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-themes-table-body" class="divide-y divide-slate-800">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Detailed Question Breakdown with Filters -->
+            <div class="dcs-card rounded-lg p-6 space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-2">
+                    <h3 class="text-lg font-bold text-slate-100">DÉTAIL QUESTION PAR QUESTION</h3>
+                    <!-- Filter buttons -->
+                    <div class="flex flex-wrap gap-1 text-xs">
+                        <button data-filter="all" class="report-filter-btn px-3 py-1 bg-cyan-600 text-white rounded font-semibold">TOUTES</button>
+                        <button data-filter="surconfiance" class="report-filter-btn px-3 py-1 bg-slate-800 text-orange-400 hover:bg-slate-700 rounded border border-slate-700 font-semibold">SURCONFIANCE</button>
+                        <button data-filter="erreur" class="report-filter-btn px-3 py-1 bg-slate-800 text-red-400 hover:bg-slate-700 rounded border border-slate-700 font-semibold">ERREURS</button>
+                        <button data-filter="consolider" class="report-filter-btn px-3 py-1 bg-slate-800 text-amber-400 hover:bg-slate-700 rounded border border-slate-700 font-semibold">À CONSOLIDER</button>
+                        <button data-filter="solide" class="report-filter-btn px-3 py-1 bg-slate-800 text-emerald-400 hover:bg-slate-700 rounded border border-slate-700 font-semibold">SOLIDES</button>
+                    </div>
+                </div>
+
+                <div id="report-questions-detail" class="space-y-4">
+                    <!-- Cards populated dynamically -->
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button type="button" class="nav-btn px-5 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded text-slate-200 text-sm font-semibold" data-nav="home">
+                    ⬅ RETOUR À L'ACCUEIL
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW 4: HISTORY -->
+        <section id="view-history" class="hidden space-y-6">
+            <div class="dcs-card rounded-lg p-6">
+                <h2 class="text-xl font-bold text-slate-100 mb-2">HISTORIQUE INDIVIDUEL ET LOCAL DES ÉVALUATIONS</h2>
+                <p class="text-xs text-slate-400 mb-6">Toutes les sessions réalisées sur ce poste informatique sont conservées en mémoire locale.</p>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-400 border-b border-slate-700 font-mono text-xs">
+                                <th class="p-3">DATE / HEURE</th>
+                                <th class="p-3">AGENT</th>
+                                <th class="p-3">ÉQUIPE</th>
+                                <th class="p-3">FONCTION</th>
+                                <th class="p-3">MODE</th>
+                                <th class="p-3">QUESTIONS</th>
+                                <th class="p-3">SCORE</th>
+                                <th class="p-3">SURCONFIANCES</th>
+                                <th class="p-3">ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body" class="divide-y divide-slate-800">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 5: TEAMS TRACKING -->
+        <section id="view-teams" class="hidden space-y-6">
+            <div class="dcs-card rounded-lg p-6">
+                <h2 class="text-xl font-bold text-slate-100 mb-2">SUIVI ET PERFORMANCE DES ÉQUIPES POSTÉES (1 À 5)</h2>
+                <p class="text-xs text-slate-400 mb-6">Comparatif et suivi dynamique par roulement de quart.</p>
+
+                <!-- Tabs 1 to 5 -->
+                <div class="flex space-x-2 border-b border-slate-700 pb-3 mb-6" id="teams-tabs">
+                    <button data-team-tab="Équipe 1" class="team-tab-btn px-4 py-2 text-xs font-bold rounded bg-cyan-600 text-white">ÉQUIPE 1</button>
+                    <button data-team-tab="Équipe 2" class="team-tab-btn px-4 py-2 text-xs font-bold rounded bg-slate-800 text-slate-300 hover:bg-slate-700">ÉQUIPE 2</button>
+                    <button data-team-tab="Équipe 3" class="team-tab-btn px-4 py-2 text-xs font-bold rounded bg-slate-800 text-slate-300 hover:bg-slate-700">ÉQUIPE 3</button>
+                    <button data-team-tab="Équipe 4" class="team-tab-btn px-4 py-2 text-xs font-bold rounded bg-slate-800 text-slate-300 hover:bg-slate-700">ÉQUIPE 4</button>
+                    <button data-team-tab="Équipe 5" class="team-tab-btn px-4 py-2 text-xs font-bold rounded bg-slate-800 text-slate-300 hover:bg-slate-700">ÉQUIPE 5</button>
+                </div>
+
+                <!-- Active team metrics summary -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" id="team-summary-kpis">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Team members list -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-400 border-b border-slate-700 font-mono text-xs">
+                                <th class="p-3">AGENT</th>
+                                <th class="p-3">FONCTION</th>
+                                <th class="p-3">DERNIER TEST</th>
+                                <th class="p-3">SCORE MOYEN</th>
+                                <th class="p-3">SURCONFIANCES CUMULÉES</th>
+                                <th class="p-3">STATUT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="team-members-table-body" class="divide-y divide-slate-800">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 6: TRAINER DASHBOARD & MATRIX -->
+        <section id="view-dashboard" class="hidden space-y-6">
+            <div class="dcs-card rounded-lg p-6 border-l-4 border-l-amber-500">
+                <div class="flex flex-wrap justify-between items-center pb-4 border-b border-slate-700 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-100">TABLEAU DE BORD FORMATEUR & MATRICE DE COMPÉTENCES</h2>
+                        <p class="text-xs text-slate-400">Analyse globale des lacunes d'exploitation de la Centrale Thermique.</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button type="button" id="btn-export-csv" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs rounded transition flex items-center space-x-1">
+                            <span>📥 EXPORTER CSV</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Global Trainer KPIs -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                    <div class="bg-slate-900 p-4 rounded border border-slate-800">
+                        <div class="text-xs text-slate-400">SCORE MOYEN GLOBAL</div>
+                        <div class="text-2xl font-mono font-bold text-cyan-400 mt-1" id="dash-global-score">0%</div>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded border border-slate-800">
+                        <div class="text-xs text-slate-400">NOMBRE TOTAL DE SESSIONS</div>
+                        <div class="text-2xl font-mono font-bold text-slate-200 mt-1" id="dash-total-sessions">0</div>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded border border-slate-800">
+                        <div class="text-xs text-slate-400">TAUX DE SURCONFIANCE</div>
+                        <div class="text-2xl font-mono font-bold text-orange-400 mt-1" id="dash-overconf-rate">0%</div>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded border border-slate-800">
+                        <div class="text-xs text-slate-400">QUESTIONS CRITIQUES RATÉES</div>
+                        <div class="text-2xl font-mono font-bold text-red-400 mt-1" id="dash-critical-failures">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Competency Matrix -->
+            <div class="dcs-card rounded-lg p-6">
+                <h3 class="text-lg font-bold text-slate-100 mb-2">MATRICE DES COMPÉTENCES PAR AGENT ET DOMAINE</h3>
+                <p class="text-xs text-slate-400 mb-4">Légende : ✓ Acquis | ? À consolider | ✗ À rafraîchir en priorité | ⚠️ Surconfiance détectée</p>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-center border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-300 border-b border-slate-700 font-mono">
+                                <th class="p-3 text-left">AGENT / ÉQUIPE</th>
+                                <th class="p-3">GAZ NATUREL</th>
+                                <th class="p-3">HYDROGÈNE</th>
+                                <th class="p-3">RÉSEAU GAZ / TORCHE</th>
+                                <th class="p-3">E004 / E005</th>
+                                <th class="p-3">SÉCURITÉS / ESD</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrix-table-body" class="divide-y divide-slate-800 text-sm">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 7: DOCUMENTATION REFERENCE -->
+        <section id="view-doc" class="hidden space-y-6">
+            <div class="dcs-card rounded-lg p-6">
+                <h2 class="text-xl font-bold text-slate-100 mb-2">RÉFÉRENTIEL DOCUMENTAIRE TECHNIQUE APPLICABLE</h2>
+                <p class="text-xs text-slate-400 mb-6">Consignes d'exploitation officielles servant d'unique référence de validation.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900 p-4 rounded border border-slate-800">
+                        <div class="text-xs font-mono text-cyan-400 font-bold">EXP-U-15-002</div>
+                        <h4 class="font-bold text-slate-200 mt-1">Surveillance de la consommation de G.N</h4>
+                        <p class="text-xs text-slate-400 mt-2">Suivi métrologique, équilibrant gaz, comptages transitaires, bilans calorifiques et seuils contractuels de surconsommation.</p>
+                    </div>
+
+                    <div class="bg-slate-900 p-4 rounded border border-slate-800">
+                        <div class="text-xs font-mono text-cyan-400 font-bold">EXP-U-15-004</div>
+                        <h4 class="font-bold text-slate-200 mt-1">Surveillance du réseau hydrogène 1,2 B</h4>
+                        <p class="text-xs text-slate-400 mt-2">Exploitation sécurisée du réseau H2 basse pression (1,2 bar eff), purges azote, vannes d'appoint, zonage ATEX et basculements de secours.</p>
+                    </div>
+
+                    <div class="bg-slate-900 p-4 rounded border border-slate-800">
+                        <div class="text-xs font-mono text-cyan-400 font-bold">EXP-U-15-005</div>
+                        <h4 class="font-bold text-slate-200 mt-1">Gestion du réseau gaz pour éviter les mises à la torche</h4>
+                        <p class="text-xs text-slate-400 mt-2">Équilibre dynamique du réseau fuel gas, régulation PCV-Torche, absorption prioritaire sur chaudières et actions d'urgence sur surpression.</p>
+                    </div>
+
+                    <div class="bg-slate-900 p-4 rounded border border-slate-800">
+                        <div class="text-xs font-mono text-cyan-400 font-bold">EXP-U-15-006</div>
+                        <h4 class="font-bold text-slate-200 mt-1">Exploitation réseau gaz</h4>
+                        <p class="text-xs text-slate-400 mt-2">Conduite globale des sous-réseaux HP/BP, ballons séparateurs V001/V002, sécurité vannes SDV, réarmement BMS et purges des condensats.</p>
+                    </div>
+
+                    <div class="bg-slate-900 p-4 rounded border border-slate-800 md:col-span-2">
+                        <div class="text-xs font-mono text-cyan-400 font-bold">EXP-U-15-007</div>
+                        <h4 class="font-bold text-slate-200 mt-1">Exploitation des réchauffeurs E004/E005 – Interface d’intervention avec le Parc Sud</h4>
+                        <p class="text-xs text-slate-400 mt-2">Mise en service/arrêt des réchauffeurs gaz combustible, régulations de température TIC, arrêt d'urgence ESD-007, et procédures de consignation aux limites de batterie du Parc Sud.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Application JavaScript Code Block -->
+    <script>
+        const THEMES_LIST = [
+            "Gaz naturel & Consommation",
+            "Réseau hydrogène 1,2 B",
+            "Réseau gaz & Torche",
+            "Exploitation réseau gaz HP/BP",
+            "Réchauffeurs E004/E005 & Parc Sud",
+            "Sécurités, BMS & ESD"
+        ];
+
+        // Banque de questions strictement vide - Aucune donnée fictive
+        const QUESTION_BANK = [];
+
+        const AppState = {
+            activeUser: null,
+            activeSession: null,
+            history: JSON.parse(localStorage.getItem('CT_OPERATIONS_HISTORY_V2') || '[]'),
+            selectedConfidence: null,
+            selectedOptionIndex: null,
+            activeReportFilter: 'all',
+            activeTeamTab: 'Équipe 1'
+        };
+
+        function showUiMessage(msg) {
+            const box = document.getElementById('app-message-box');
+            const txt = document.getElementById('app-message-text');
+            if (box && txt) {
+                txt.textContent = msg;
+                box.classList.remove('hidden');
+                box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function hideUiMessage() {
+            const box = document.getElementById('app-message-box');
+            if (box) box.classList.add('hidden');
+        }
+
+        function buildQuestionSet(selectedThemes, requestedCount, mode) {
+            let pool = QUESTION_BANK.filter(q => selectedThemes.includes(q.theme));
+
+            if (pool.length === 0) {
+                pool = [...QUESTION_BANK];
+            }
+
+            pool = [...new Map(pool.map(q => [q.id, q])).values()];
+
+            for (let i = pool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pool[i], pool[j]] = [pool[j], pool[i]];
+            }
+
+            if (mode === "targeted") {
+                pool.sort((a, b) => Number(b.critical) - Number(a.critical));
+            }
+
+            return pool.slice(0, requestedCount);
+        }
+
+        function switchView(viewName) {
+            const views = ['home', 'quiz', 'report', 'history', 'teams', 'dashboard', 'doc'];
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            const activeEl = document.getElementById(`view-${viewName}`);
+            if (activeEl) activeEl.classList.remove('hidden');
+
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.dataset.nav === viewName) {
+                    btn.className = 'nav-btn px-3 py-1.5 text-xs font-semibold rounded bg-cyan-900/60 text-cyan-300 border border-cyan-500 transition';
+                } else {
+                    btn.className = 'nav-btn px-3 py-1.5 text-xs font-semibold rounded text-slate-300 hover:bg-slate-800 border border-transparent transition';
+                }
+            });
+
+            // Trigger view-specific renders
+            if (viewName === 'history') renderHistoryView();
+            if (viewName === 'teams') renderTeamsView();
+            if (viewName === 'dashboard') renderDashboardView();
+        }
+
+        function initSetupFormUI() {
+            const container = document.getElementById('themes-checkbox-container');
+            if (!container) return;
+
+            let html = `
+                <label class="col-span-2 md:col-span-3 lg:col-span-4 flex items-center space-x-2 pb-2 border-b border-slate-800 cursor-pointer font-bold text-cyan-300">
+                    <input type="checkbox" id="cb-all-themes" checked class="text-cyan-500 rounded focus:ring-0">
+                    <span>☑ TOUS LES THÈMES (Recommandé)</span>
+                </label>
+            `;
+
+            THEMES_LIST.forEach(t => {
+                html += `
+                    <label class="flex items-center space-x-2 cursor-pointer text-slate-300 hover:text-slate-100">
+                        <input type="checkbox" name="selected-themes" value="${t}" checked class="theme-cb text-cyan-500 rounded focus:ring-0">
+                        <span class="text-xs">${t}</span>
+                    </label>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            // Master checkbox logic
+            const allCb = document.getElementById('cb-all-themes');
+            const themeCbs = document.querySelectorAll('.theme-cb');
+
+            allCb.addEventListener('change', (e) => {
+                themeCbs.forEach(cb => cb.checked = e.target.checked);
+            });
+
+            themeCbs.forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const allChecked = Array.from(themeCbs).every(c => c.checked);
+                    allCb.checked = allChecked;
+                });
+            });
+        }
+
+        function startSession(event) {
+            if (event) event.preventDefault();
+
+            hideUiMessage();
+
+            try {
+                const nom = document.getElementById('input-nom')?.value.trim();
+                const prenom = document.getElementById('input-prenom')?.value.trim();
+                const team = document.getElementById('input-team')?.value;
+                const role = document.getElementById('input-role')?.value;
+
+                if (!nom || !prenom || !team || !role) {
+                    showUiMessage("Merci de renseigner l'équipe, le nom, le prénom et la fonction.");
+                    return false;
+                }
+
+                // Sécurité au démarrage si la banque de questions est vide
+                if (!QUESTION_BANK || QUESTION_BANK.length === 0) {
+                    showUiMessage("Aucune question certifiée n’est actuellement disponible. La banque doit être validée à partir des consignes officielles.");
+                    return false;
+                }
+
+                let selectedThemes = Array.from(
+                    document.querySelectorAll('input[name="selected-themes"]:checked')
+                ).map(cb => cb.value);
+
+                const allThemesChecked = document.getElementById('cb-all-themes')?.checked;
+                if (allThemesChecked || selectedThemes.length === 0) {
+                    selectedThemes = [...THEMES_LIST];
+                }
+
+                const countRadio = document.querySelector('input[name="question-count"]:checked');
+                const questionCountTarget = parseInt(countRadio ? countRadio.value : "20", 10);
+
+                const allowedCounts = [10, 20, 30, 50];
+                if (!allowedCounts.includes(questionCountTarget)) {
+                    showUiMessage("Nombre de questions invalide.");
+                    return false;
+                }
+
+                const modeRadio = document.querySelector('input[name="session-mode"]:checked');
+                const mode = modeRadio ? modeRadio.value : "evaluation";
+
+                const questions = buildQuestionSet(selectedThemes, questionCountTarget, mode);
+
+                if (!questions || questions.length === 0) {
+                    showUiMessage("Aucune question certifiée n’est actuellement disponible. La banque doit être validée à partir des consignes officielles.");
+                    return false;
+                }
+
+                AppState.activeUser = { nom, prenom, team, role };
+                AppState.activeSession = {
+                    id: "SESS-" + Date.now(),
+                    user: AppState.activeUser,
+                    mode: mode,
+                    requestedCount: questionCountTarget,
+                    questions: questions,
+                    currentIndex: 0,
+                    userAnswers: [],
+                    startTime: Date.now()
+                };
+
+                updateActiveUserBadge();
+                switchView("quiz");
+                renderCurrentQuestion();
+
+                return false;
+            } catch (error) {
+                console.error("Erreur démarrage session :", error);
+                showUiMessage("Une erreur empêche le démarrage du questionnaire. Consultez la console.");
+                return false;
+            }
+        }
+
+        function updateActiveUserBadge() {
+            const badge = document.getElementById('active-user-badge');
+            const info = document.getElementById('badge-user-info');
+            if (AppState.activeUser && badge && info) {
+                info.textContent = `${AppState.activeUser.prenom} ${AppState.activeUser.nom} (${AppState.activeUser.team})`;
+                badge.classList.remove('hidden');
+            }
+        }
+
+        function renderCurrentQuestion() {
+            const session = AppState.activeSession;
+            if (!session) {
+                console.error("Aucune session active");
+                switchView("home");
+                return;
+            }
+
+            if (!Array.isArray(session.questions) || session.questions.length === 0) {
+                console.error("La session ne contient aucune question");
+                alert("Erreur : aucune question disponible.");
+                return;
+            }
+
+            const q = session.questions[session.currentIndex];
+            if (!q) {
+                console.error("Question introuvable à l'index", session.currentIndex);
+                return;
+            }
+
+            // Reset selection state
+            AppState.selectedConfidence = null;
+            AppState.selectedOptionIndex = null;
+
+            // DOM elements
+            document.getElementById('quiz-progress-text').textContent = `QUESTION ${session.currentIndex + 1} / ${session.questions.length}`;
+            document.getElementById('quiz-theme-badge').textContent = q.theme;
+            document.getElementById('quiz-doc-ref').textContent = `${q.document} (${q.chapter})`;
+
+            const critBadge = document.getElementById('quiz-critical-badge');
+            if (q.critical) {
+                critBadge.classList.remove('hidden');
+            } else {
+                critBadge.classList.add('hidden');
+            }
+
+            document.getElementById('quiz-question-text').textContent = q.question;
+
+            // Options rendering
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'quiz-option-btn w-full p-4 text-left rounded border border-slate-700 bg-slate-900/90 text-slate-200 text-sm hover:border-cyan-500 hover:bg-slate-800 transition flex items-center justify-between';
+                btn.dataset.index = idx;
+                btn.innerHTML = `
+                    <span>${optText}</span>
+                    <span class="option-check text-cyan-400 font-bold opacity-0">✓</span>
+                `;
+                btn.addEventListener('click', () => selectOption(idx));
+                container.appendChild(btn);
+            });
+
+            // Confidence buttons reset
+            document.querySelectorAll('.btn-confidence').forEach(btn => {
+                btn.classList.remove('border-emerald-500', 'border-amber-500', 'border-red-500', 'bg-slate-700');
+            });
+
+            // Feedback box reset
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            feedbackBox.classList.add('hidden');
+
+            // Action buttons state
+            document.getElementById('btn-validate-answer').classList.remove('hidden');
+            document.getElementById('btn-next-question').classList.add('hidden');
+            document.getElementById('quiz-mode-indicator').textContent = `MODE : ${session.mode.toUpperCase()}`;
+        }
+
+        function selectOption(index) {
+            AppState.selectedOptionIndex = index;
+            document.querySelectorAll('.quiz-option-btn').forEach((btn, idx) => {
+                const check = btn.querySelector('.option-check');
+                if (idx === index) {
+                    btn.classList.add('border-cyan-400', 'bg-cyan-950/40');
+                    if (check) check.classList.remove('opacity-0');
+                } else {
+                    btn.classList.remove('border-cyan-400', 'bg-cyan-950/40');
+                    if (check) check.classList.add('opacity-0');
+                }
+            });
+        }
+
+        function selectConfidence(level) {
+            AppState.selectedConfidence = level;
+            document.querySelectorAll('.btn-confidence').forEach(btn => {
+                const conf = btn.dataset.confidence;
+                if (conf === level) {
+                    btn.classList.add('bg-slate-700');
+                    if (conf === 'sur') btn.classList.add('border-emerald-500');
+                    if (conf === 'hesitant') btn.classList.add('border-amber-500');
+                    if (conf === 'hasard') btn.classList.add('border-red-500');
+                } else {
+                    btn.classList.remove('bg-slate-700', 'border-emerald-500', 'border-amber-500', 'border-red-500');
+                }
+            });
+        }
+
+        function validateAnswer() {
+            const session = AppState.activeSession;
+            if (!session) return;
+
+            if (AppState.selectedOptionIndex === null) {
+                alert("Veuillez sélectionner une réponse.");
+                return;
+            }
+
+            if (!AppState.selectedConfidence) {
+                alert("Veuillez indiquer obligatoirement votre niveau de certitude.");
+                return;
+            }
+
+            const q = session.questions[session.currentIndex];
+            const isCorrect = (AppState.selectedOptionIndex === q.correctAnswer);
+            const conf = AppState.selectedConfidence;
+
+            // Diagnostic calculation
+            let diagnostic = '';
+            if (isCorrect && conf === 'sur') {
+                diagnostic = 'solide';
+            } else if (isCorrect && (conf === 'hesitant' || conf === 'hasard')) {
+                diagnostic = 'consolider';
+            } else if (!isCorrect && conf === 'sur') {
+                diagnostic = 'surconfiance';
+            } else {
+                diagnostic = 'erreur';
+            }
+
+            const answerEntry = {
+                questionId: q.id,
+                selectedAnswer: AppState.selectedOptionIndex,
+                correct: isCorrect,
+                confidence: conf,
+                diagnostic: diagnostic,
+                timestamp: Date.now()
+            };
+
+            session.userAnswers.push(answerEntry);
+
+            // Behavior depending on mode
+            if (session.mode === 'training') {
+                showTrainingFeedback(q, isCorrect, answerEntry);
+            } else {
+                advanceQuestion();
+            }
+        }
+
+        function showTrainingFeedback(q, isCorrect, entry) {
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            const statusEl = document.getElementById('feedback-status');
+            const correctEl = document.getElementById('feedback-correct-answer');
+            const explEl = document.getElementById('feedback-explanation');
+            const refEl = document.getElementById('feedback-reference');
+            const remEl = document.getElementById('feedback-reminder');
+
+            if (isCorrect) {
+                feedbackBox.className = "mb-6 p-4 rounded-lg border border-emerald-700 bg-emerald-950/40 text-emerald-200";
+                statusEl.textContent = "✓ BONNE RÉPONSE";
+            } else {
+                feedbackBox.className = "mb-6 p-4 rounded-lg border border-red-700 bg-red-950/40 text-red-200";
+                statusEl.textContent = entry.diagnostic === 'surconfiance' ? "⚠️ RÉPONSE INCORRECTE (SURCONFIANCE DÉTECTÉE)" : "✗ RÉPONSE INCORRECTE";
+            }
+
+            correctEl.textContent = `BONNE RÉPONSE : ${q.options[q.correctAnswer]}`;
+            explEl.textContent = `EXPLICATION : ${q.explanation}`;
+            refEl.textContent = `RÉFÉRENCE : ${q.document} - ${q.chapter} (${q.page})`;
+            remEl.textContent = `RAPPEL CONSIGNE : "${q.reminder}"`;
+
+            feedbackBox.classList.remove('hidden');
+
+            document.getElementById('btn-validate-answer').classList.add('hidden');
+            document.getElementById('btn-next-question').classList.remove('hidden');
+        }
+
+        function advanceQuestion() {
+            const session = AppState.activeSession;
+            if (!session) return;
+
+            session.currentIndex++;
+
+            if (session.currentIndex < session.questions.length) {
+                renderCurrentQuestion();
+            } else {
+                finishSession();
+            }
+        }
+
+        function finishSession() {
+            const session = AppState.activeSession;
+            if (!session) return;
+
+            session.endTime = Date.now();
+
+            // Store in local history
+            AppState.history.unshift(session);
+            localStorage.setItem('CT_OPERATIONS_HISTORY_V2', JSON.stringify(AppState.history));
+
+            // Render report
+            renderReportView(session);
+            switchView('report');
+        }
+
+        function renderReportView(session) {
+            const total = session.questions.length;
+            const correctCount = session.userAnswers.filter(a => a.correct).length;
+            const percent = Math.round((correctCount / total) * 100);
+
+            // Metadata
+            document.getElementById('report-agent-meta').textContent = `Agent: ${session.user.prenom} ${session.user.nom} | ${session.user.team} | ${session.user.role} | Date: ${new Date(session.startTime).toLocaleString('fr-FR')}`;
+            document.getElementById('report-score-percent').textContent = `${percent}%`;
+            document.getElementById('report-score-ratio').textContent = `${correctCount} / ${total} Bonnes réponses`;
+
+            // KPIs
+            const kpiSolide = session.userAnswers.filter(a => a.diagnostic === 'solide').length;
+            const kpiConsolider = session.userAnswers.filter(a => a.diagnostic === 'consolider').length;
+            const kpiErreur = session.userAnswers.filter(a => a.diagnostic === 'erreur').length;
+            const kpiSurconfiance = session.userAnswers.filter(a => a.diagnostic === 'surconfiance').length;
+
+            document.getElementById('kpi-solide').textContent = kpiSolide;
+            document.getElementById('kpi-consolider').textContent = kpiConsolider;
+            document.getElementById('kpi-erreur').textContent = kpiErreur;
+            document.getElementById('kpi-surconfiance').textContent = kpiSurconfiance;
+
+            // Refresher priorities
+            const prioritiesList = document.getElementById('report-priorities-list');
+            prioritiesList.innerHTML = '';
+
+            const surconfianceAnswers = session.userAnswers.filter(a => a.diagnostic === 'surconfiance');
+            if (surconfianceAnswers.length > 0) {
+                surconfianceAnswers.forEach(ans => {
+                    const q = session.questions.find(item => item.id === ans.questionId);
+                    prioritiesList.innerHTML += `
+                        <div class="p-3 bg-orange-950/40 border border-orange-800 rounded flex items-center justify-between">
+                            <div>
+                                <span class="font-bold text-orange-400">PRIORITÉ HAUTE (SURCONFIANCE) :</span>
+                                <span class="text-slate-200 ml-2">${q.theme} - ${q.question}</span>
+                            </div>
+                            <span class="text-xs font-mono text-orange-300 bg-orange-900/60 px-2 py-0.5 rounded">${q.document}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                prioritiesList.innerHTML = `<div class="text-xs text-slate-400 italic">Aucune situation de surconfiance détectée sur cette session. Félicitations.</div>`;
+            }
+
+            // Theme competence breakdown table
+            const themesTable = document.getElementById('report-themes-table-body');
+            themesTable.innerHTML = '';
+
+            const themeGroups = {};
+            session.questions.forEach((q, idx) => {
+                if (!themeGroups[q.theme]) themeGroups[q.theme] = { total: 0, correct: 0, surconf: 0, err: 0 };
+                themeGroups[q.theme].total++;
+                const ans = session.userAnswers[idx];
+                if (ans.correct) themeGroups[q.theme].correct++;
+                if (ans.diagnostic === 'surconfiance') themeGroups[q.theme].surconf++;
+                if (ans.diagnostic === 'erreur') themeGroups[q.theme].err++;
+            });
+
+            Object.keys(themeGroups).forEach(themeName => {
+                const g = themeGroups[themeName];
+                const score = Math.round((g.correct / g.total) * 100);
+                let diagText = score >= 80 ? "SOLIDE" : score >= 60 ? "À CONSOLIDER" : "À REVOIR EN PRIORITÉ";
+                let diagColor = score >= 80 ? "text-emerald-400" : score >= 60 ? "text-amber-400" : "text-red-400";
+
+                themesTable.innerHTML += `
+                    <tr>
+                        <td class="p-3 font-semibold text-slate-200">${themeName}</td>
+                        <td class="p-3 font-mono font-bold">${score}%</td>
+                        <td class="p-3 text-xs text-slate-400">${g.total} Q. posées</td>
+                        <td class="p-3 text-red-400 font-mono">${g.err}</td>
+                        <td class="p-3 text-orange-400 font-mono">${g.surconf}</td>
+                        <td class="p-3 font-bold text-xs ${diagColor}">${diagText}</td>
+                    </tr>
+                `;
+            });
+
+            // Render detail question cards
+            renderQuestionDetailCards(session, 'all');
+        }
+
+        function renderQuestionDetailCards(session, filter) {
+            const container = document.getElementById('report-questions-detail');
+            container.innerHTML = '';
+
+            session.questions.forEach((q, idx) => {
+                const ans = session.userAnswers[idx];
+                if (!ans) return;
+
+                if (filter !== 'all' && ans.diagnostic !== filter) return;
+
+                let diagBadge = '';
+                if (ans.diagnostic === 'solide') diagBadge = `<span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-bold px-2 py-0.5 rounded">✓ SOLIDE</span>`;
+                if (ans.diagnostic === 'consolider') diagBadge = `<span class="bg-amber-950 text-amber-400 border border-amber-800 text-xs font-bold px-2 py-0.5 rounded">? À CONSOLIDER</span>`;
+                if (ans.diagnostic === 'erreur') diagBadge = `<span class="bg-red-950 text-red-400 border border-red-800 text-xs font-bold px-2 py-0.5 rounded">✗ ERREUR IDENTIFIÉE</span>`;
+                if (ans.diagnostic === 'surconfiance') diagBadge = `<span class="bg-orange-950 text-orange-400 border border-orange-800 text-xs font-bold px-2 py-0.5 rounded">⚠️ SURCONFIANCE</span>`;
+
+                let confText = ans.confidence === 'sur' ? '🟢 Sûr' : ans.confidence === 'hesitant' ? '🟡 Hésitant' : '🔴 Au hasard';
+
+                container.innerHTML += `
+                    <div class="bg-slate-900 p-4 rounded border border-slate-800 space-y-3">
+                        <div class="flex justify-between items-start gap-2">
+                            <div>
+                                <span class="text-xs font-mono text-cyan-400 font-bold">Q${idx + 1} - ${q.theme}</span>
+                                <h4 class="text-sm font-semibold text-slate-100 mt-1">${q.question}</h4>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                ${diagBadge}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                            <div class="p-2 rounded bg-slate-950 border border-slate-800">
+                                <span class="text-slate-400">VOTRE RÉPONSE :</span>
+                                <div class="${ans.correct ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}">${q.options[ans.selectedAnswer]}</div>
+                                <div class="text-[10px] text-slate-500 mt-1">Certitude déclarée : ${confText}</div>
+                            </div>
+                            <div class="p-2 rounded bg-slate-950 border border-slate-800">
+                                <span class="text-slate-400">BONNE RÉPONSE :</span>
+                                <div class="text-emerald-400 font-bold">${q.options[q.correctAnswer]}</div>
+                                <div class="text-[10px] text-slate-500 mt-1">Réf: ${q.document} - ${q.chapter} (${q.page})</div>
+                            </div>
+                        </div>
+
+                        <div class="text-xs text-slate-300 bg-slate-950/60 p-3 rounded border border-slate-800/80">
+                            <span class="font-bold text-cyan-400">RAPPEL CONSIGNE D'EXPLOITATION :</span>
+                            <p class="mt-1 italic text-slate-300">"${q.reminder}"</p>
+                            <p class="mt-2 text-slate-400"><strong class="text-slate-200">Raisonnement :</strong> ${q.explanation}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (container.children.length === 0) {
+                container.innerHTML = `<div class="text-xs text-slate-500 italic p-4 text-center">Aucune question ne correspond à ce filtre.</div>`;
+            }
+        }
+
+        function renderHistoryView() {
+            const body = document.getElementById('history-table-body');
+            body.innerHTML = '';
+
+            if (AppState.history.length === 0) {
+                body.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-xs text-slate-500">Aucune évaluation enregistrée localement.</td></tr>`;
+                return;
+            }
+
+            AppState.history.forEach(sess => {
+                const total = sess.questions.length;
+                const correct = sess.userAnswers.filter(a => a.correct).length;
+                const percent = Math.round((correct / total) * 100);
+                const surconf = sess.userAnswers.filter(a => a.diagnostic === 'surconfiance').length;
+
+                body.innerHTML += `
+                    <tr class="hover:bg-slate-900/60">
+                        <td class="p-3 text-xs font-mono text-slate-400">${new Date(sess.startTime).toLocaleString('fr-FR')}</td>
+                        <td class="p-3 font-semibold text-slate-200">${sess.user.prenom} ${sess.user.nom}</td>
+                        <td class="p-3 text-xs text-slate-300">${sess.user.team}</td>
+                        <td class="p-3 text-xs text-slate-400">${sess.user.role}</td>
+                        <td class="p-3 text-xs font-mono text-cyan-400 uppercase">${sess.mode}</td>
+                        <td class="p-3 text-xs font-mono">${total}</td>
+                        <td class="p-3 font-mono font-bold ${percent >= 75 ? 'text-emerald-400' : 'text-amber-400'}">${percent}%</td>
+                        <td class="p-3 font-mono font-bold text-orange-400">${surconf}</td>
+                        <td class="p-3">
+                            <button type="button" onclick="loadSavedSession('${sess.id}')" class="px-2.5 py-1 bg-cyan-950 text-cyan-400 hover:bg-cyan-900 border border-cyan-800 rounded text-xs">
+                                REVOIR
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        window.loadSavedSession = function(sessionId) {
+            const sess = AppState.history.find(s => s.id === sessionId);
+            if (sess) {
+                AppState.activeSession = sess;
+                renderReportView(sess);
+                switchView('report');
+            }
+        };
+
+        function renderTeamsView() {
+            const activeTeam = AppState.activeTeamTab;
+            const teamSessions = AppState.history.filter(s => s.user.team === activeTeam);
+
+            const summaryKpis = document.getElementById('team-summary-kpis');
+            const totalSess = teamSessions.length;
+
+            let avgScore = 0;
+            let totalSurconf = 0;
+
+            if (totalSess > 0) {
+                const totalPct = teamSessions.reduce((acc, s) => {
+                    const corr = s.userAnswers.filter(a => a.correct).length;
+                    return acc + Math.round((corr / s.questions.length) * 100);
+                }, 0);
+                avgScore = Math.round(totalPct / totalSess);
+
+                totalSurconf = teamSessions.reduce((acc, s) => {
+                    return acc + s.userAnswers.filter(a => a.diagnostic === 'surconfiance').length;
+                }, 0);
+            }
+
+            summaryKpis.innerHTML = `
+                <div class="bg-slate-900 p-4 rounded border border-slate-800">
+                    <div class="text-xs text-slate-400">SESSIONS RÉALISÉES</div>
+                    <div class="text-2xl font-mono font-bold text-slate-100 mt-1">${totalSess}</div>
+                </div>
+                <div class="bg-slate-900 p-4 rounded border border-slate-800">
+                    <div class="text-xs text-slate-400">SCORE MOYEN ÉQUIPE</div>
+                    <div class="text-2xl font-mono font-bold text-cyan-400 mt-1">${avgScore}%</div>
+                </div>
+                <div class="bg-slate-900 p-4 rounded border border-slate-800">
+                    <div class="text-xs text-slate-400">SURCONFIANCES CUMULÉES</div>
+                    <div class="text-2xl font-mono font-bold text-orange-400 mt-1">${totalSurconf}</div>
+                </div>
+                <div class="bg-slate-900 p-4 rounded border border-slate-800">
+                    <div class="text-xs text-slate-400">STATUT GLOBAL</div>
+                    <div class="text-sm font-bold ${avgScore >= 80 ? 'text-emerald-400' : 'text-amber-400'} mt-2">
+                        ${avgScore >= 80 ? '✓ ACQUIS SOLIDES' : '⚠️ RECYCLAGE RECOMMANDÉ'}
+                    </div>
+                </div>
+            `;
+
+            // Unique agents
+            const membersTable = document.getElementById('team-members-table-body');
+            membersTable.innerHTML = '';
+
+            const agentMap = {};
+            teamSessions.forEach(s => {
+                const key = `${s.user.nom}_${s.user.prenom}`;
+                if (!agentMap[key]) {
+                    agentMap[key] = { nom: s.user.nom, prenom: s.user.prenom, role: s.user.role, sessions: [] };
+                }
+                agentMap[key].sessions.push(s);
+            });
+
+            const agentKeys = Object.keys(agentMap);
+            if (agentKeys.length === 0) {
+                membersTable.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-xs text-slate-500">Aucun agent de cette équipe n'a encore réalisé d'évaluation.</td></tr>`;
+                return;
+            }
+
+            agentKeys.forEach(k => {
+                const ag = agentMap[k];
+                const lastSess = ag.sessions[0];
+                const lastScore = Math.round((lastSess.userAnswers.filter(a => a.correct).length / lastSess.questions.length) * 100);
+                const agentSurconf = ag.sessions.reduce((acc, s) => acc + s.userAnswers.filter(a => a.diagnostic === 'surconfiance').length, 0);
+
+                membersTable.innerHTML += `
+                    <tr>
+                        <td class="p-3 font-semibold text-slate-200">${ag.prenom} ${ag.nom}</td>
+                        <td class="p-3 text-xs text-slate-400">${ag.role}</td>
+                        <td class="p-3 text-xs font-mono text-slate-400">${new Date(lastSess.startTime).toLocaleDateString('fr-FR')}</td>
+                        <td class="p-3 font-mono font-bold text-cyan-400">${lastScore}%</td>
+                        <td class="p-3 font-mono font-bold text-orange-400">${agentSurconf}</td>
+                        <td class="p-3">
+                            <span class="text-xs font-bold ${lastScore >= 80 ? 'text-emerald-400' : 'text-amber-400'}">
+                                ${lastScore >= 80 ? 'SOLIDE' : 'À CONSOLIDER'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderDashboardView() {
+            const allSessions = AppState.history;
+            const totalSess = allSessions.length;
+
+            if (totalSess === 0) {
+                document.getElementById('dash-global-score').textContent = '0%';
+                document.getElementById('dash-total-sessions').textContent = '0';
+                document.getElementById('dash-overconf-rate').textContent = '0%';
+                document.getElementById('dash-critical-failures').textContent = '0';
+                document.getElementById('matrix-table-body').innerHTML = `<tr><td colspan="6" class="p-4 text-center text-xs text-slate-500">Aucune donnée disponible.</td></tr>`;
+                return;
+            }
+
+            let totalQuestions = 0;
+            let totalCorrect = 0;
+            let totalSurconf = 0;
+            let totalCriticalFails = 0;
+
+            allSessions.forEach(s => {
+                s.questions.forEach((q, idx) => {
+                    totalQuestions++;
+                    const ans = s.userAnswers[idx];
+                    if (ans && ans.correct) totalCorrect++;
+                    if (ans && ans.diagnostic === 'surconfiance') totalSurconf++;
+                    if (ans && !ans.correct && q.critical) totalCriticalFails++;
+                });
+            });
+
+            const globalScore = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+            const overconfRate = totalQuestions > 0 ? Math.round((totalSurconf / totalQuestions) * 100) : 0;
+
+            document.getElementById('dash-global-score').textContent = `${globalScore}%`;
+            document.getElementById('dash-total-sessions').textContent = totalSess;
+            document.getElementById('dash-overconf-rate').textContent = `${overconfRate}%`;
+            document.getElementById('dash-critical-failures').textContent = totalCriticalFails;
+
+            // Render matrix
+            const matrixBody = document.getElementById('matrix-table-body');
+            matrixBody.innerHTML = '';
+
+            const agentMap = {};
+            allSessions.forEach(s => {
+                const key = `${s.user.nom}_${s.user.prenom}`;
+                if (!agentMap[key]) {
+                    agentMap[key] = { nom: s.user.nom, prenom: s.user.prenom, team: s.user.team, answers: [] };
+                }
+                s.userAnswers.forEach((ans, idx) => {
+                    const q = s.questions[idx];
+                    agentMap[key].answers.push({ q, ans });
+                });
+            });
+
+            Object.keys(agentMap).forEach(k => {
+                const ag = agentMap[k];
+
+                const getCategorySymbol = (themeKeyword) => {
+                    const relevant = ag.answers.filter(item => item.q && item.q.theme.toLowerCase().includes(themeKeyword.toLowerCase()));
+                    if (relevant.length === 0) return '<span class="text-slate-600">-</span>';
+
+                    const surconf = relevant.some(item => item.ans.diagnostic === 'surconfiance');
+                    if (surconf) return '<span class="text-orange-400 font-bold" title="Surconfiance détectée">⚠️</span>';
+
+                    const incorrect = relevant.some(item => !item.ans.correct);
+                    if (incorrect) return '<span class="text-red-400 font-bold" title="À rafraîchir en priorité">✗</span>';
+
+                    const hesitant = relevant.some(item => item.ans.confidence !== 'sur');
+                    if (hesitant) return '<span class="text-amber-400 font-bold" title="À consolider">?</span>';
+
+                    return '<span class="text-emerald-400 font-bold" title="Acquis solide">✓</span>';
+                };
+
+                matrixBody.innerHTML += `
+                    <tr class="hover:bg-slate-900/60">
+                        <td class="p-3 text-left font-semibold text-slate-200">${ag.prenom} ${ag.nom} <span class="text-xs text-slate-500">(${ag.team})</span></td>
+                        <td class="p-3">${getCategorySymbol('Gaz naturel')}</td>
+                        <td class="p-3">${getCategorySymbol('hydrogène')}</td>
+                        <td class="p-3">${getCategorySymbol('Réseau gaz')}</td>
+                        <td class="p-3">${getCategorySymbol('Réchauffeur')}</td>
+                        <td class="p-3">${getCategorySymbol('Sécurités')}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function exportToCSV() {
+            if (AppState.history.length === 0) {
+                alert("Aucune donnée d'historique à exporter.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,ID_Session,Date,Nom,Prenom,Equipe,Fonction,Mode,Questions,Score_Percent,Surconfiances\n";
+
+            AppState.history.forEach(s => {
+                const total = s.questions.length;
+                const correct = s.userAnswers.filter(a => a.correct).length;
+                const percent = Math.round((correct / total) * 100);
+                const surconf = s.userAnswers.filter(a => a.diagnostic === 'surconfiance').length;
+                const dateStr = new Date(s.startTime).toISOString();
+
+                csvContent += `"${s.id}","${dateStr}","${s.user.nom}","${s.user.prenom}","${s.user.team}","${s.user.role}","${s.mode}",${total},${percent},${surconf}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `centrale_thermique_competences_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Populate checkboxes
+            initSetupFormUI();
+
+            // Setup form submission
+            const setupForm = document.getElementById("setup-form");
+            if (setupForm) {
+                setupForm.addEventListener("submit", startSession);
+            }
+
+            // Navigation buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchView(btn.dataset.nav));
+            });
+
+            // Confidence buttons
+            document.querySelectorAll('.btn-confidence').forEach(btn => {
+                btn.addEventListener('click', () => selectConfidence(btn.dataset.confidence));
+            });
+
+            // Validate answer button
+            const btnValidate = document.getElementById('btn-validate-answer');
+            if (btnValidate) btnValidate.addEventListener('click', validateAnswer);
+
+            // Next question button
+            const btnNext = document.getElementById('btn-next-question');
+            if (btnNext) btnNext.addEventListener('click', advanceQuestion);
+
+            // Report filters
+            document.querySelectorAll('.report-filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.report-filter-btn').forEach(b => {
+                        b.className = 'report-filter-btn px-3 py-1 bg-slate-800 text-slate-400 hover:bg-slate-700 rounded border border-slate-700 font-semibold';
+                    });
+                    e.target.className = 'report-filter-btn px-3 py-1 bg-cyan-600 text-white rounded font-semibold';
+                    if (AppState.activeSession) {
+                        renderQuestionDetailCards(AppState.activeSession, e.target.dataset.filter);
+                    }
+                });
+            });
+
+            // Teams tabs
+            document.querySelectorAll('.team-tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.team-tab-btn').forEach(b => {
+                        b.className = 'team-tab-btn px-4 py-2 text-xs font-bold rounded bg-slate-800 text-slate-300 hover:bg-slate-700';
+                    });
+                    e.target.className = 'team-tab-btn px-4 py-2 text-xs font-bold rounded bg-cyan-600 text-white';
+                    AppState.activeTeamTab = e.target.dataset.teamTab;
+                    renderTeamsView();
+                });
+            });
+
+            // Export CSV
+            const btnExport = document.getElementById('btn-export-csv');
+            if (btnExport) btnExport.addEventListener('click', exportToCSV);
+
+            // Message box dismiss button
+            const btnCloseMsg = document.getElementById('btn-close-message');
+            if (btnCloseMsg) btnCloseMsg.addEventListener('click', hideUiMessage);
+
+            console.log("Application Centrale Thermique & Utilités initialisée avec succès.");
+        });
+    </script>
+</body>
+</html>
