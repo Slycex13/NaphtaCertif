@@ -3,9 +3,7 @@ import { questions } from './questions_200_data.mjs'
 
 const sqlText = (value) => `'${String(value).replaceAll("'", "''")}'`
 const sqlJson = (value) => `${sqlText(JSON.stringify(value))}::jsonb`
-const targetPostsForTheme = (themeId) => themeId === 'securite'
-  ? ['operateur', 'rondier', 'chef-thermique', 'chef-elec', 'chef-quart']
-  : ['operateur', 'rondier', 'chef-thermique', 'chef-quart']
+const targetPostsForTheme = () => ['chef-thermique']
 
 const rows = questions.map((question) => [
   sqlText(question.id),

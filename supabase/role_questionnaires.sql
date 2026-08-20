@@ -8,14 +8,14 @@ begin;
 alter table public.questions add column if not exists target_posts jsonb not null default '[]'::jsonb;
 alter table public.attempts add column if not exists post_profile_id text not null default 'operateur';
 
--- Cible les 200 questions historiques sur les postes concernés lorsque le champ est vide.
+-- Les 200 questions historiques proviennent du référentiel gaz/combustibles : elles restent
+-- dans le questionnaire Chef de poste thermique uniquement.
 update public.questions
 set target_posts = case
-  when theme_id = 'securite' then '["operateur", "rondier", "chef-thermique", "chef-elec", "chef-quart"]'::jsonb
-  when theme_id in ('gaz', 'hydrogene', 'torche', 'hp-bp', 'rechauffeurs') then '["operateur", "rondier", "chef-thermique", "chef-quart"]'::jsonb
-  else '["operateur", "rondier", "chef-thermique", "chef-elec", "chef-quart"]'::jsonb
+  when id ~ '^Q-[0-9]+$' then '["chef-thermique"]'::jsonb
+  else target_posts
 end
-where target_posts = '[]'::jsonb;
+where id ~ '^Q-[0-9]+$';
 
 insert into public.questions (
   id, theme_id, status, critical, prompt, choices, correct_index, rationale, source, target_posts

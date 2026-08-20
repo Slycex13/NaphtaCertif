@@ -15,6 +15,7 @@ export const postProfiles = [
     description: 'Gestes terrain, mises en sécurité et transmission des écarts.',
     tone: 'orange',
     icon: 'activity',
+    themeIds: ['securite', 'gaz', 'torche', 'rechauffeurs'],
   },
   {
     id: 'rondier',
@@ -23,6 +24,7 @@ export const postProfiles = [
     description: 'Relevés, détection d’anomalies et contrôle des équipements.',
     tone: 'mint',
     icon: 'wind',
+    themeIds: ['securite', 'gaz', 'hydrogene', 'torche', 'rechauffeurs'],
   },
   {
     id: 'chef-thermique',
@@ -31,6 +33,7 @@ export const postProfiles = [
     description: 'Conduite thermique, combustibles et performance énergétique.',
     tone: 'yellow',
     icon: 'flame',
+    themeIds: ['gaz', 'hydrogene', 'torche', 'hp-bp', 'rechauffeurs', 'securite'],
   },
   {
     id: 'chef-elec',
@@ -39,6 +42,7 @@ export const postProfiles = [
     description: 'Réseau électrique, utilités hors vapeur et manœuvres HT/BT.',
     tone: 'blue',
     icon: 'zap',
+    themeIds: ['securite'],
   },
   {
     id: 'chef-quart',
@@ -47,12 +51,19 @@ export const postProfiles = [
     description: 'Vision globale, décisions sûres et conduite des situations incidentelles.',
     tone: 'violet',
     icon: 'shield',
+    themeIds: ['securite', 'gaz', 'torche'],
   },
 ]
 
 export const allPostProfileIds = postProfiles.map((profile) => profile.id)
 export const getPostProfile = (profileId) => postProfiles.find((profile) => profile.id === profileId) || postProfiles[0]
-export const questionMatchesPost = (question, profileId) => !question.targetPosts?.length || question.targetPosts.includes(profileId)
+export const questionMatchesPost = (question, profileId) => {
+  if (Array.isArray(question.targetPosts)) return question.targetPosts.includes(profileId)
+  // Compatibilité avec la banque historique avant exécution de la migration SQL.
+  // Les questions Q-001 à Q-200 sont le socle gaz/combustibles du chef thermique.
+  if (/^Q-[0-9]+$/.test(question.id)) return profileId === 'chef-thermique'
+  return false
+}
 
 // Jeu de départ issu des domaines identifiés dans les supports fournis.
 // Les formulations métier sont marquées "à valider" dans le panel admin avant publication.

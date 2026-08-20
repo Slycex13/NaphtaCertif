@@ -28,6 +28,8 @@ L’accueil propose cinq profils : opérateur, rondier, chef de poste thermique,
 
 Après avoir exécuté `schema.sql`, exécuter une fois [`supabase/role_questionnaires.sql`](./supabase/role_questionnaires.sql) dans Supabase SQL Editor. Le script conserve les résultats existants, ajoute le ciblage par poste, rattache la banque historique aux profils et ajoute 100 questions NC (20 par poste). Les questions sont publiées pour être visibles immédiatement, mais doivent être relues par le référent HSE / exploitation avant une utilisation d’aptitude ou d’habilitation.
 
+Si une ancienne version de `role_questionnaires.sql` a déjà été exécutée, exécuter uniquement [`supabase/fix_question_scope.sql`](./supabase/fix_question_scope.sql) : les 200 questions historiques seront alors réservées au chef de poste thermique.
+
 ## GitHub Pages
 
 Le workflow [`deploy.yml`](./.github/workflows/deploy.yml) construit et publie automatiquement `dist` à chaque push sur `main`. Ajouter les deux variables `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` dans les secrets GitHub avant le build si la base distante est utilisée.

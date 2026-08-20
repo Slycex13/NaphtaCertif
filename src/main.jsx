@@ -35,7 +35,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true)
   const [sessionConfig, setSessionConfig] = useState({
     name: '', team: 'Équipe 1', role: 'Opérateur', mode: 'Évaluation', count: 8,
-    themeIds: themes.map((theme) => theme.id), postProfileId: 'operateur',
+    themeIds: postProfiles[0].themeIds, postProfileId: 'operateur',
   })
 
   const refreshStore = async () => {
@@ -221,9 +221,10 @@ function EmployeeHome({ config, setConfig, store, onStart, onAdmin }) {
   const update = (key, value) => setConfig((current) => ({ ...current, [key]: value }))
   const chooseProfile = (profileId) => {
     const profile = getPostProfile(profileId)
-    setConfig((current) => ({ ...current, postProfileId: profile.id, role: profile.label }))
+    setConfig((current) => ({ ...current, postProfileId: profile.id, role: profile.label, themeIds: profile.themeIds }))
   }
   const toggleTheme = (themeId) => setConfig((current) => ({ ...current, themeIds: current.themeIds.includes(themeId) ? current.themeIds.filter((id) => id !== themeId) : [...current.themeIds, themeId] }))
+  const profileThemes = themes.filter((theme) => selectedProfile.themeIds.includes(theme.id))
   return <div className="employee-page page-enter">
     <section className="hero-grid">
       <div className="hero-copy">
@@ -245,7 +246,7 @@ function EmployeeHome({ config, setConfig, store, onStart, onAdmin }) {
           <div className="field-label">Mode de travail</div>
           <div className="mode-grid">{[['Évaluation', 'Le score et la correction apparaissent à la fin.', Target], ['Entraînement', 'Un rappel après chaque réponse.', Sparkles], ['Révision ciblée', 'Les situations critiques passent d’abord.', Zap]].map(([label, description, ModeIcon]) => <button type="button" key={label} className={`mode-option ${config.mode === label ? 'selected' : ''}`} onClick={() => update('mode', label)}><span className="mode-icon"><ModeIcon size={16} /></span><span><strong>{label}</strong><small>{description}</small></span>{config.mode === label && <Check size={15} className="mode-check" />}</button>)}</div>
         </div>
-        <div className="form-side"><div className="side-label">Périmètre technique</div><div className="theme-selection">{themes.map((theme) => <button type="button" className={`theme-chip ${config.themeIds.includes(theme.id) ? `selected ${theme.tone}` : ''}`} key={theme.id} onClick={() => toggleTheme(theme.id)}><span className="theme-chip-mark"><Icon name={theme.icon} size={14} /></span><span>{theme.short}</span>{config.themeIds.includes(theme.id) && <Check size={13} />}</button>)}</div><div className="side-divider" /><div className="count-row"><div><div className="side-label">Nombre de questions</div><span className="muted-copy">Plus c’est court, plus c’est régulier.</span></div><div className="count-buttons">{[5, 8, 12].map((count) => <button type="button" key={count} className={config.count === count ? 'selected' : ''} onClick={() => update('count', count)}>{count}</button>)}</div></div><button className="primary-button start-button" type="submit">Commencer la session <ArrowRight size={17} /></button><p className="privacy-note"><Shield size={13} />Votre score est visible par le référent habilité.</p></div>
+        <div className="form-side"><div className="side-label">Périmètre technique <small>{selectedProfile.label}</small></div><div className="theme-selection">{profileThemes.map((theme) => <button type="button" className={`theme-chip ${config.themeIds.includes(theme.id) ? `selected ${theme.tone}` : ''}`} key={theme.id} onClick={() => toggleTheme(theme.id)}><span className="theme-chip-mark"><Icon name={theme.icon} size={14} /></span><span>{theme.short}</span>{config.themeIds.includes(theme.id) && <Check size={13} />}</button>)}</div><div className="side-divider" /><div className="count-row"><div><div className="side-label">Nombre de questions</div><span className="muted-copy">Plus c’est court, plus c’est régulier.</span></div><div className="count-buttons">{[5, 8, 12].map((count) => <button type="button" key={count} className={config.count === count ? 'selected' : ''} onClick={() => update('count', count)}>{count}</button>)}</div></div><button className="primary-button start-button" type="submit">Commencer la session <ArrowRight size={17} /></button><p className="privacy-note"><Shield size={13} />Votre score est visible par le référent habilité.</p></div>
       </form>
       <div className="bottom-notes"><div><span className="note-index">A1</span><span><strong>Référentiel source</strong><small>EXP-U · référentiel FAF · consignes Centrale Sud</small></span></div><div><span className="note-index orange">!</span><span><strong>Certitude obligatoire</strong><small>Chaque réponse inclut votre niveau de confiance.</small></span></div><button className="text-button" type="button" onClick={onAdmin}>Accéder au suivi admin <ArrowRight size={15} /></button></div>
     </section>
